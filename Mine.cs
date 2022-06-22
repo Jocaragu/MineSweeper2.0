@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace MineSweeper
 {
-    internal class Mine
+    public class Mine
     {
         public bool Detonate { get; set; } = false;
         public string Status { get; set; } = "latent";
+        public Coordinates Coordinates { get; set; }
         public void SteppingOn(bool stepped)
         {
             if (stepped)
@@ -17,6 +18,10 @@ namespace MineSweeper
                 Detonate = true;
                 Status = "kaBOOM!!!";
             }
+        }
+        public Mine(Coordinates coordinates)
+        {
+            Coordinates = coordinates;
         }
     }
 }

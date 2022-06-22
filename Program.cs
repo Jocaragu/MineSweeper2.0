@@ -4,7 +4,17 @@
     {
         static void Main(string[] args)
         {
-            UI.StartGame();
+            Integrator integrator = new Integrator();
+            integrator.MakeTheBoard();
+            //integrator.PrintBoard();
+            integrator.BoardTheCells();
+            integrator.BoardTheMines();
+            Console.Clear();
+            integrator.PrintGrid();
+            integrator.SelectCell();
+            Console.Clear();
+            integrator.PrintGrid();
+            integrator.SelectCell();
             Console.ReadLine();
         }
     }
