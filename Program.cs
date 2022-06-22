@@ -1,11 +1,11 @@
 ﻿namespace MineSweeper
 {
-    internal class Program : SomeTools
+    internal class Program
     {
         static void Main(string[] args)
         {
-            Board board = new Board(5,5);
-            
+            UI.StartGame();
+            Console.ReadLine();
         }
     }
 }

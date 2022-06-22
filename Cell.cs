@@ -8,6 +8,18 @@ namespace MineSweeper
 {
     public class Cell
     {
-        public string emptyLabel = "[_]";
+        public string Label = "[?]";
+        public Coordinates Coordinates { get; set; }
+        public Cell(Coordinates coordinates)
+        {
+            Coordinates = coordinates;
+        }
+        public void SteppingOn(bool stepped)
+        {
+            if (stepped)
+            {
+                Label = "[ ]";
+            }
+        }
     }
 }
