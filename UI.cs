@@ -13,15 +13,22 @@ namespace MineSweeper
             Console.Write(prompt);
             return Convert.ToInt32(Console.ReadLine());
         }
-
-        public static void StartGame()
+        
+        public static Board StartGame()
         {
             Console.WriteLine("Welcome, choose the size of your board");
             int uWidth = GetUserInt("Width: ");
             int uHeight = GetUserInt("Height: ");
             Board board = new(uWidth, uHeight);
             board.EnlistCells();
+            Console.WriteLine();
             board.PrintGrid();
+            return board;
+        }
+        public static void TouchCell()
+        {
+            Console.WriteLine("Select a cell based on its coordinates");
+            
         }
     }
 }

@@ -32,8 +32,23 @@ namespace MineSweeper
         }
         public void PrintGrid()
         {
+            for (int i = 0; i < (Width); i++)
+            {
+                Console.Write("===");
+            }
+            Console.WriteLine("===");
+            Console.Write("y\\x");
+            for (int i = 0; i < Width; i++)
+            {
+                Console.Write(" "+(i+1)+" ");
+            }
+            Console.WriteLine();
             foreach (var cell in TheCells)
             {
+                if (cell.Coordinates.X == 1)
+                {
+                    Console.Write(" "+cell.Coordinates.Y+" ");
+                }
                 Console.Write(cell.Label);
                 if (cell.Coordinates.X == Width)
                 {
