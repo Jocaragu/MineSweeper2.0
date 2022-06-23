@@ -9,12 +9,12 @@
             //integrator.PrintBoard();
             integrator.BoardTheCells();
             integrator.BoardTheMines();
-            Console.Clear();
             integrator.PrintGrid();
             integrator.SelectCell();
-            Console.Clear();
             integrator.PrintGrid();
-            integrator.SelectCell();
+
+            integrator.RevealMines();
+
             Console.ReadLine();
         }
     }

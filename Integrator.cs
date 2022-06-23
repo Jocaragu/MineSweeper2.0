@@ -104,6 +104,7 @@ namespace MineSweeper
             int ySelection = GetUserInt("y: ");
             Coordinates selection = new(xSelection, ySelection);
             SteppingCell(selection);
+            SteppingMine(selection);
         }
 
         List<Mine> TheMines = new List<Mine>();
@@ -122,8 +123,23 @@ namespace MineSweeper
             var item = TheMines.Find(stepped => stepped.Coordinates.Matches(step));
             if (item != null)
             {
-                Console.WriteLine("MINE");
+                item.SteppingOn(true);
             }
+        }
+
+        public void RevealMines()
+        {
+            foreach(var cell in TheCells)
+            {
+                foreach(var mine in TheMines)
+                {
+                    if (mine.Coordinates.Matches(cell.Coordinates))
+                    {
+                        cell.Label = " ☼ ";
+                    }
+                }
+            }
+            PrintGrid();
         }
     }
 }
