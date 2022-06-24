@@ -4,16 +4,17 @@
     {
         static void Main(string[] args)
         {
-            Integrator integrator = new Integrator();
+            Integrator integrator = new();
             integrator.MakeTheBoard();
-            //integrator.PrintBoard();
+            integrator.BoardTheCoordinates();
             integrator.BoardTheCells();
             integrator.BoardTheMines();
             integrator.PrintGrid();
             integrator.SelectCell();
             integrator.PrintGrid();
-
             integrator.RevealMines();
+            
+
 
             Console.ReadLine();
         }

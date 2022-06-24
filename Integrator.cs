@@ -12,9 +12,9 @@ namespace MineSweeper
         {
             Console.Write(prompt);
             return Convert.ToInt32(Console.ReadLine());
-        }
-
-        Board TheBoard = new Board(0, 0);
+        }//tool for simplifying using Int input
+        
+        Board TheBoard = new(0, 0);
         public Board MakeTheBoard()
         {
             Console.WriteLine("Let's make a board");
@@ -37,16 +37,37 @@ namespace MineSweeper
         //    }
         //}
 
-        List<Cell> TheCells = new List<Cell>();
-        public List<Cell> BoardTheCells()
+        List<Coordinates> TheCoordinates = new();
+        public List<Coordinates> BoardTheCoordinates()
         {
-            for (int i = 0; i < (TheBoard.Width * TheBoard.Height); i++)
+            for (int i = 0; i < TheBoard.Size; i++)
             {
                 var coordinates = new Coordinates((i % TheBoard.Width) + 1, (i / TheBoard.Width) + 1);
-                var cell = new Cell(coordinates);
+                TheCoordinates.Add(coordinates);
+            }
+            return TheCoordinates;
+        }
+        
+        List<Cell> TheCells = new();
+        public List<Cell> BoardTheCells()
+        {
+            for (int i = 0; i < (TheBoard.Size); i++)
+            {
+                var cell = new Cell(TheCoordinates[i]);
                 TheCells.Add(cell);
             }
             return TheCells;
+        }
+        List<Mine> TheMines = new();
+        public List<Mine> BoardTheMines()
+        {
+            List<Coordinates> rngCoordinates = TheCoordinates.OrderBy(_=>rng.Next()).ToList();
+            for (int i = 0; i < (TheBoard.Size / 4); i++)
+            {
+                var mine = new Mine(rngCoordinates[i]);
+                TheMines.Add(mine);
+            }
+            return TheMines;
         }
         public void PrintGrid()
         {
@@ -64,7 +85,7 @@ namespace MineSweeper
                 }
                 else
                 {
-                    Console.Write(" "+ (i+1));
+                    Console.Write(" " + (i + 1));
                 }
             }
             Console.WriteLine();
@@ -88,13 +109,21 @@ namespace MineSweeper
                 }
             }
         }
-
         public void SteppingCell(Coordinates step)
         {
             var item = TheCells.Find(stepped => stepped.Coordinates.Matches(step));
             if (item != null)
             {
                 item.SteppingOn(true);
+            }
+        }
+        public void SteppingMine(Coordinates step)
+        {
+            var item = TheMines.Find(stepped => stepped.Coordinates.Matches(step));
+            if (item != null)
+            {
+                item.SteppingOn(true);
+                Console.WriteLine("aaaaaaa");
             }
         }
         public void SelectCell()
@@ -106,32 +135,11 @@ namespace MineSweeper
             SteppingCell(selection);
             SteppingMine(selection);
         }
-
-        List<Mine> TheMines = new List<Mine>();
-        public List<Mine> BoardTheMines()
-        {
-            for (int i = 0; i < (TheBoard.Size/4); i++)
-            {
-                var coordinates = new Coordinates((i % TheBoard.Width) + 1, (i / TheBoard.Width) + 1);
-                var mine = new Mine(coordinates);
-                TheMines.Add(mine);
-            }
-            return TheMines;
-        }
-        public void SteppingMine(Coordinates step)
-        {
-            var item = TheMines.Find(stepped => stepped.Coordinates.Matches(step));
-            if (item != null)
-            {
-                item.SteppingOn(true);
-            }
-        }
-
         public void RevealMines()
         {
-            foreach(var cell in TheCells)
+            foreach (var cell in TheCells)
             {
-                foreach(var mine in TheMines)
+                foreach (var mine in TheMines)
                 {
                     if (mine.Coordinates.Matches(cell.Coordinates))
                     {
@@ -141,5 +149,8 @@ namespace MineSweeper
             }
             PrintGrid();
         }
+        //Implementing a modern version of the Fisher-Yates shuffle to randomize Mine Coordinates
+        private static readonly Random rng = new Random();
+
     }
 }
