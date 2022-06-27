@@ -8,18 +8,12 @@ namespace MineSweeper
 {
     public class Integrator
     {
-        public static int GetUserInt(string prompt)
-        {
-            Console.Write(prompt);
-            return Convert.ToInt32(Console.ReadLine());
-        }//tool for simplifying using Int input
-        
         Board TheBoard = new(0, 0);
         public Board MakeTheBoard()
         {
             Console.WriteLine("Let's make a board");
-            int uWidth = GetUserInt("Choose the width: ");
-            int uHeight = GetUserInt("Choose the height: ");
+            int uWidth = MyTools.GetUserInt("Choose the width: ");
+            int uHeight = MyTools.GetUserInt("Choose the height: ");
             TheBoard.Width = uWidth;
             TheBoard.Height = uHeight;
             TheBoard.Size = uWidth * uHeight;
@@ -59,6 +53,7 @@ namespace MineSweeper
             return TheCells;
         }
         List<Mine> TheMines = new();
+        private static readonly Random rng = new Random();
         public List<Mine> BoardTheMines()
         {
             List<Coordinates> rngCoordinates = TheCoordinates.OrderBy(_=>rng.Next()).ToList();
@@ -123,14 +118,14 @@ namespace MineSweeper
             if (item != null)
             {
                 item.SteppingOn(true);
-                Console.WriteLine("aaaaaaa");
+                Console.WriteLine(item.Status);
             }
         }
         public void SelectCell()
         {
             Console.WriteLine("Select a cell within the coordinates");
-            int xSelection = GetUserInt("x: ");
-            int ySelection = GetUserInt("y: ");
+            int xSelection = MyTools.GetUserInt("x: ");
+            int ySelection = MyTools.GetUserInt("y: ");
             Coordinates selection = new(xSelection, ySelection);
             SteppingCell(selection);
             SteppingMine(selection);
@@ -149,8 +144,5 @@ namespace MineSweeper
             }
             PrintGrid();
         }
-        //Implementing a modern version of the Fisher-Yates shuffle to randomize Mine Coordinates
-        private static readonly Random rng = new Random();
-
     }
 }

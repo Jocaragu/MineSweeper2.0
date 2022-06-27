@@ -18,7 +18,7 @@ namespace MineSweeper
         {
             if (stepped)
             {
-                Label = "  ";
+                Label = "   ";
             }
         }
     }

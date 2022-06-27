@@ -17,7 +17,5 @@ namespace MineSweeper
             Height = height;
             Size = width * height;
         }
-
-       
     }
 }

@@ -4,15 +4,9 @@
     {
         static void Main(string[] args)
         {
-            Integrator integrator = new();
-            integrator.MakeTheBoard();
-            integrator.BoardTheCoordinates();
-            integrator.BoardTheCells();
-            integrator.BoardTheMines();
-            integrator.PrintGrid();
-            integrator.SelectCell();
-            integrator.PrintGrid();
-            integrator.RevealMines();
+            Game game = new Game();
+            game.Start();
+            game.Play();
             
 
 
