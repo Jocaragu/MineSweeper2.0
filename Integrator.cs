@@ -59,8 +59,8 @@ namespace MineSweeper
             List<Coordinates> rngCoordinates = TheCoordinates;
             Stepping(seed);
             rngCoordinates.RemoveAll(safe => safe.Matches(seed));
-            rngCoordinates.OrderBy(_ => rng.Next()).ToList();
-            for (int i = 0; i < (TheBoard.Size - 1); i++)
+            MyTools.FisherYates(rngCoordinates);
+            for (int i = 0; i < (TheBoard.Size/4); i++)
             {
                 var mine = new Mine(rngCoordinates[i]);
                 TheMines.Add(mine);

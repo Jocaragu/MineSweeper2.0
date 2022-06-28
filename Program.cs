@@ -5,7 +5,15 @@
         static void Main(string[] args)
         {
             Integrator integrator = new Integrator();
-            integrator.MakeTheBoard();
+            try 
+            {
+                integrator.MakeTheBoard(); 
+            }
+            catch (Exception ex) 
+            { 
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine("please wrinte an integer"); 
+            }
             integrator.BoardTheCoordinates();
             integrator.BoardTheCells();
             integrator.PrintGrid();
