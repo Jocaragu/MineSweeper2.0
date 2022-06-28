@@ -8,7 +8,7 @@ namespace MineSweeper
 {
     public class Integrator
     {
-        Board TheBoard = new(0, 0);
+        private Board TheBoard = new(0, 0);
         public Board MakeTheBoard()
         {
             Console.WriteLine("Let's make a board");
@@ -31,18 +31,18 @@ namespace MineSweeper
         //    }
         //}
 
-        List<Coordinates> TheCoordinates = new();
+        public List<Coordinates> TheCoordinates = new();
         public List<Coordinates> BoardTheCoordinates()
         {
             for (int i = 0; i < TheBoard.Size; i++)
             {
-                var coordinates = new Coordinates((i % TheBoard.Width) + 1, (i / TheBoard.Width) + 1);
+                var coordinates = new Coordinates((i % TheBoard.Width) + 1, TheBoard.Height - (i / TheBoard.Width));
                 TheCoordinates.Add(coordinates);
             }
             return TheCoordinates;
         }
-        
-        List<Cell> TheCells = new();
+
+        public List<Cell> TheCells = new();
         public List<Cell> BoardTheCells()
         {
             for (int i = 0; i < (TheBoard.Size); i++)
@@ -52,12 +52,15 @@ namespace MineSweeper
             }
             return TheCells;
         }
-        List<Mine> TheMines = new();
+        public List<Mine> TheMines = new();
         private static readonly Random rng = new Random();
-        public List<Mine> BoardTheMines()
+        public List<Mine> BoardTheMines(Coordinates seed)
         {
-            List<Coordinates> rngCoordinates = TheCoordinates.OrderBy(_=>rng.Next()).ToList();
-            for (int i = 0; i < (TheBoard.Size / 4); i++)
+            List<Coordinates> rngCoordinates = TheCoordinates;
+            Stepping(seed);
+            rngCoordinates.RemoveAll(safe => safe.Matches(seed));
+            rngCoordinates.OrderBy(_ => rng.Next()).ToList();
+            for (int i = 0; i < (TheBoard.Size - 1); i++)
             {
                 var mine = new Mine(rngCoordinates[i]);
                 TheMines.Add(mine);
@@ -66,79 +69,94 @@ namespace MineSweeper
         }
         public void PrintGrid()
         {
-            for (int i = 0; i < (TheBoard.Width); i++)
-            {
-                Console.Write("===");
-            }
-            Console.WriteLine("===");
-            Console.Write("y\\x");
-            for (int i = 0; i < TheBoard.Width; i++)
-            {
-                if (i < 9)
-                {
-                    Console.Write(" " + (i + 1) + " ");
-                }
-                else
-                {
-                    Console.Write(" " + (i + 1));
-                }
-            }
-            Console.WriteLine();
+            Console.Clear();
+            Console.WriteLine("   ┌");
             foreach (var cell in TheCells)
             {
                 if (cell.Coordinates.X == 1)
                 {
                     if (cell.Coordinates.Y < 10)
                     {
-                        Console.Write(" " + cell.Coordinates.Y + " ");
+                        Console.Write(" " + cell.Coordinates.Y + " │");
                     }
                     else
                     {
-                        Console.Write(cell.Coordinates.Y + " ");
+                        Console.Write(cell.Coordinates.Y + " │");
+                    }
+                    Console.Write(cell.Label);
+                }
+                else if (cell.Coordinates.X == TheBoard.Width)
+                {
+                    Console.Write(cell.Label);
+                    if (cell.Coordinates.Y > 1)
+                    {
+                        Console.Write("\n   ┤\n");
+                    }
+                    else
+                    {
+                        Console.Write("\n   ┼");
                     }
                 }
-                Console.Write(cell.Label);
-                if (cell.Coordinates.X == TheBoard.Width)
+                else
                 {
-                    Console.WriteLine("");
+                    Console.Write(cell.Label);
                 }
             }
-        }
-        public void SteppingCell(Coordinates step)
-        {
-            var item = TheCells.Find(stepped => stepped.Coordinates.Matches(step));
-            if (item != null)
+            for (int i = 1; i < TheBoard.Width; i++)
             {
-                item.SteppingOn(true);
+                Console.Write("───┬");
+                if (i == (TheBoard.Width - 1))
+                {
+                    Console.WriteLine("───┘");
+                }
+            }
+            for (int i = 0; i < TheBoard.Width + 1; i++)
+            {
+                if (i < 10)
+                {
+                    Console.Write(" " + i + "  ");
+                }
+                else
+                {
+                    Console.Write(" " + i + " ");
+                }
+            }
+            Console.WriteLine("\n");
+        }
+        public void Stepping(Coordinates step)
+        {
+            var cell = TheCells.Find(stepped => stepped.Coordinates.Matches(step));
+            var mine = TheMines.Find(stepped => stepped.Coordinates.Matches(step));
+            if (mine != null)
+            {
+                mine.SteppingOn(true);
+                RevealMines();
+                Console.WriteLine(mine.Status);
+            }
+            else if (cell != null)
+            {
+                cell.SteppingOn(true);
             }
         }
-        public void SteppingMine(Coordinates step)
-        {
-            var item = TheMines.Find(stepped => stepped.Coordinates.Matches(step));
-            if (item != null)
-            {
-                item.SteppingOn(true);
-                Console.WriteLine(item.Status);
-            }
-        }
-        public void SelectCell()
+        public Coordinates? Selection { get; set; }
+        public Coordinates SelectCell()
         {
             Console.WriteLine("Select a cell within the coordinates");
             int xSelection = MyTools.GetUserInt("x: ");
             int ySelection = MyTools.GetUserInt("y: ");
-            Coordinates selection = new(xSelection, ySelection);
-            SteppingCell(selection);
-            SteppingMine(selection);
+            Selection = new Coordinates(xSelection, ySelection);
+            return Selection;
         }
         public void RevealMines()
         {
             foreach (var cell in TheCells)
             {
+                cell.SteppingOn(true);
                 foreach (var mine in TheMines)
                 {
                     if (mine.Coordinates.Matches(cell.Coordinates))
                     {
-                        cell.Label = " ☼ ";
+                        cell.Label = "[☼] ";
                     }
                 }
             }

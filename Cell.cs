@@ -8,7 +8,7 @@ namespace MineSweeper
 {
     public class Cell
     {
-        public string Label = "[ ]";
+        public string Label = "▐█▌ ";
         public Coordinates Coordinates { get; set; }
         public Cell(Coordinates coordinates)
         {
@@ -18,7 +18,7 @@ namespace MineSweeper
         {
             if (stepped)
             {
-                Label = "   ";
+                Label = " ·  ";
             }
         }
     }

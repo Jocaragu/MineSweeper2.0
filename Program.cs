@@ -4,11 +4,18 @@
     {
         static void Main(string[] args)
         {
-            Game game = new Game();
-            game.Start();
-            game.Play();
-            
-
+            Integrator integrator = new Integrator();
+            integrator.MakeTheBoard();
+            integrator.BoardTheCoordinates();
+            integrator.BoardTheCells();
+            integrator.PrintGrid();
+            integrator.BoardTheMines(integrator.SelectCell());
+            while (integrator.TheMines.All(mine => mine.Detonate == false))
+            {
+                integrator.PrintGrid();
+                integrator.Stepping(integrator.SelectCell());
+            }
+            Console.WriteLine("Game over!");
 
             Console.ReadLine();
         }

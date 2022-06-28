@@ -10,30 +10,39 @@ namespace MineSweeper
     {
         Integrator integrator = new();
         public Gamestate currentstate { get; set; }
+        public Game()
+        {
+            currentstate = Gamestate.Launching;
+            if (currentstate == Gamestate.Launching)
+            {
+                Start();
+                currentstate = Gamestate.Playing;
+            }
+            while (currentstate == Gamestate.Playing)
+            {
+                Play();
+            }
+            if (currentstate == Gamestate.Over)
+            {
+                Over();
+            }
+        }
         public void Start()
         {
             integrator.MakeTheBoard();
             integrator.BoardTheCoordinates();
             integrator.BoardTheCells();
-            Console.Clear();
-            integrator.PrintGrid();
-            integrator.SelectCell();
-            integrator.BoardTheMines();
-            currentstate = Gamestate.Playing;
+            //integrator.BoardTheMines();
         }
         public void Play()
         {
-            do
-            {
-                Console.Clear();
-                integrator.PrintGrid();
-                integrator.SelectCell();
-            }
-            while (currentstate == Gamestate.Playing);
+            integrator.PrintGrid();
+            integrator.SelectCell();
         }
         public void Over()
         {
             integrator.RevealMines();
+            Console.WriteLine("game over!");
         }
     }
     public enum Gamestate
