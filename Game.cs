@@ -8,41 +8,72 @@ namespace MineSweeper
 {
     public class Game
     {
-        Integrator integrator = new();
-        public Gamestate currentstate { get; set; }
+        internal Integrator integrator = new();
+        public static Gamestate currentstate { get; set; }
+
         public Game()
         {
-            currentstate = Gamestate.Launching;
-            if (currentstate == Gamestate.Launching)
+            while (currentstate == Gamestate.Launching)
             {
                 Start();
-                currentstate = Gamestate.Playing;
+                if (currentstate != Gamestate.Launching)
+                {
+                    break;
+                }
             }
             while (currentstate == Gamestate.Playing)
             {
                 Play();
+                if (currentstate != Gamestate.Playing)
+                {
+                    break;
+                }
             }
-            if (currentstate == Gamestate.Over)
+            while (currentstate == Gamestate.Over)
             {
                 Over();
+                if (currentstate != Gamestate.Over)
+                {
+                    break;
+                }
             }
         }
+
         public void Start()
         {
             integrator.MakeTheBoard();
             integrator.BoardTheCoordinates();
             integrator.BoardTheCells();
-            //integrator.BoardTheMines();
+            integrator.PrintGrid();
+            integrator.BoardTheMines(integrator.SelectCell());
+            currentstate = Gamestate.Playing;
         }
         public void Play()
         {
             integrator.PrintGrid();
-            integrator.SelectCell();
+            integrator.Stepping(integrator.SelectCell());
         }
         public void Over()
         {
-            integrator.RevealMines();
-            Console.WriteLine("game over!");
+            Console.WriteLine("\nGame over!!!");
+            Console.Write("\nTry again y/n?: ");
+            char next = Console.ReadKey().KeyChar;
+            if (next == 'Y'||next == 'y')
+            {
+                Console.WriteLine("\n\nHere we go again!");
+                Console.ReadLine();
+                currentstate = Gamestate.Launching;
+                Game newGame = new();
+            }
+            else if (next == 'N'||next=='n')
+            {
+                Console.WriteLine("\n\nBye bye!");
+                currentstate = Gamestate.Exiting;
+            }
+            else
+            {
+                Over();
+            }
         }
     }
     public enum Gamestate
@@ -50,5 +81,6 @@ namespace MineSweeper
         Launching,
         Playing,
         Over,
+        Exiting,
     }
 }

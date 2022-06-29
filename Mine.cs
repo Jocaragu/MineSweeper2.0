@@ -17,6 +17,7 @@ namespace MineSweeper
             {
                 Detonate = true;
                 Status = "kaBOOM!!!";
+                Game.currentstate = Gamestate.Over;
             }
         }
         public Mine(Coordinates coordinates)

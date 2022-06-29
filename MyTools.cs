@@ -12,7 +12,15 @@ namespace MineSweeper
         public static int GetUserInt(string prompt)
         {
             Console.Write(prompt);
-            return Convert.ToInt32(Console.ReadLine());
+            int uInt;
+            bool success = int.TryParse(Console.ReadLine(), out uInt);
+            while (!success) 
+            {
+                Console.WriteLine("\nPlease enter an integer!\n");
+                Console.Write(prompt);
+                success = int.TryParse(Console.ReadLine(), out uInt);
+            }
+            return uInt;
         }
         public static string? GetUserString(string prompt)
         {

@@ -53,7 +53,6 @@ namespace MineSweeper
             return TheCells;
         }
         public List<Mine> TheMines = new();
-        private static readonly Random rng = new Random();
         public List<Mine> BoardTheMines(Coordinates seed)
         {
             List<Coordinates> rngCoordinates = TheCoordinates;
