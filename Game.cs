@@ -45,13 +45,16 @@ namespace MineSweeper
             integrator.BoardTheCoordinates();
             integrator.BoardTheCells();
             integrator.PrintGrid();
-            integrator.BoardTheMines(integrator.SelectCell());
+            Coordinates seed = integrator.SelectCoordinates();
+            integrator.BoardTheMines(seed);
+            integrator.HintTheCells();
+            integrator.Stepping(seed);
             currentstate = Gamestate.Playing;
         }
         public void Play()
         {
             integrator.PrintGrid();
-            integrator.Stepping(integrator.SelectCell());
+            integrator.Stepping(integrator.SelectCoordinates());
         }
         public void Over()
         {

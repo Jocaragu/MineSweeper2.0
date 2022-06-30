@@ -13,7 +13,9 @@ namespace MineSweeper
         {
             Console.WriteLine("Let's make a board");
             int uWidth = MyTools.GetUserInt("Choose the width: ");
+            if (uWidth < 5) { uWidth = 5;}
             int uHeight = MyTools.GetUserInt("Choose the height: ");
+            if (uHeight < 5) { uHeight = 5;}
             TheBoard.Width = uWidth;
             TheBoard.Height = uHeight;
             TheBoard.Size = uWidth * uHeight;
@@ -55,11 +57,13 @@ namespace MineSweeper
         public List<Mine> TheMines = new();
         public List<Mine> BoardTheMines(Coordinates seed)
         {
+            List<Coordinates> SafeZone = CreatePerimeter(seed);
+            SafeZone.Add(seed);
             List<Coordinates> rngCoordinates = TheCoordinates;
-            Stepping(seed);
-            rngCoordinates.RemoveAll(safe => safe.Matches(seed));
+            rngCoordinates.RemoveAll(r => SafeZone.Exists(s => (s.X,s.Y) == (r.X,r.Y)));
+            //rngCoordinates.RemoveAll(safe => safe.Matches(seed));
             MyTools.FisherYates(rngCoordinates);
-            for (int i = 0; i < (TheBoard.Size/4); i++)
+            for (int i = 0; i < (TheBoard.Size / 10); i++)
             {
                 var mine = new Mine(rngCoordinates[i]);
                 TheMines.Add(mine);
@@ -122,6 +126,21 @@ namespace MineSweeper
             }
             Console.WriteLine("\n");
         }
+        public void HintTheCells()
+        {
+            foreach (Cell hintedCell in TheCells)
+            {
+                List<Coordinates> CellPerimeter = CreatePerimeter(hintedCell.Coordinates);
+                var minesAroundCell = (
+                    from mineA in TheMines
+                    join coordinatesB in CellPerimeter
+                    on new { mineA.Coordinates.X, mineA.Coordinates.Y }
+                    equals new { coordinatesB.X, coordinatesB.Y }
+                    select new { mineA }).ToList();
+                hintedCell.DetectedAdjacentMines(minesAroundCell.Count);
+                CellPerimeter.Clear();
+            }
+        }
         public void Stepping(Coordinates step)
         {
             var cell = TheCells.Find(stepped => stepped.Coordinates.Matches(step));
@@ -135,27 +154,61 @@ namespace MineSweeper
             else if (cell != null)
             {
                 cell.SteppingOn(true);
+                
+                if (cell.AdjacentMines == 0)
+                {
+                    List<Coordinates> CellPerimeter = CreatePerimeter(cell.Coordinates);
+                    foreach (var coordinate in CellPerimeter)
+                    {
+                        foreach (var item in TheCells)
+                        {
+                            if (item.Coordinates.Matches(coordinate) && item.Revealed==false)
+                            {
+                                Stepping(coordinate);
+                            }
+                        }
+                    }
+                }
+
+                //Console.ReadLine();
             }
         }
-        public Coordinates? Selection { get; set; }
-        public Coordinates SelectCell()
+        public Coordinates? SelectedCoordinates { get; set; }
+        public Coordinates SelectCoordinates()
         {
             Console.WriteLine("Select a cell within the coordinates");
             int xSelection = MyTools.GetUserInt("x: ");
             int ySelection = MyTools.GetUserInt("y: ");
-            Selection = new Coordinates(xSelection, ySelection);
-            return Selection;
+            SelectedCoordinates = new Coordinates(xSelection, ySelection);
+            return SelectedCoordinates;
         }
+        public List<Coordinates> CreatePerimeter(Coordinates p)
+        {
+            List<Coordinates> Perimeter = new();
+
+            for (int j = p.Y - 1; j < p.Y + 2; j++)
+            {
+                for (int i = p.X - 1; i < p.X + 2; i++)
+                {
+                    Coordinates perimeterCoordinates = new(i, j);
+                    if (!(perimeterCoordinates.X == p.X & perimeterCoordinates.Y == p.Y))
+                    {
+                        Perimeter.Add(perimeterCoordinates);
+                    }
+                }
+            }
+            return Perimeter;
+        }
+        
         public void RevealMines()
         {
             foreach (var cell in TheCells)
             {
-                cell.SteppingOn(true);
                 foreach (var mine in TheMines)
                 {
                     if (mine.Coordinates.Matches(cell.Coordinates))
                     {
-                        cell.Label = "[☼] ";
+                        cell.Label = " ☼  ";
                     }
                 }
             }
